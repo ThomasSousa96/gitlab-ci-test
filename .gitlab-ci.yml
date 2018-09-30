@@ -1,0 +1,28 @@
+image: maven:3.5
+
+stages:
+  - test
+  - package
+  - deploy
+
+test:
+  stage: test
+  script:
+    - mvn clean test
+
+package:
+  stage: package
+  cache:
+    key: target
+    policy: push
+    paths:
+      - ./target
+  script:
+    - mvn package -Dmaven.test.skip=true
+
+staging_deploy:
+  stage: deploy
+  before_script:
+    - sudo apt install gnupg2
+  script:
+    - echo "DEPLOY"

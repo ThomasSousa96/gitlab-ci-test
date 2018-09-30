@@ -23,6 +23,6 @@ package:
 staging_deploy:
   stage: deploy
   before_script:
-    - sudo apt install gnupg2
+    - sudo apt-get install gnupg2
   script:
     - echo "DEPLOY"

@@ -1,6 +1,8 @@
 image: infinityrefactoring/maven:3.5
 
 cache:
+  key: maven-dependencies
+  policy: pull
   paths:
     - /root/.m2/repository
 

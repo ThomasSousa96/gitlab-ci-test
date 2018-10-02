@@ -13,6 +13,10 @@ stages:
   - package
   - deploy
 
+before_script:
+  - git config --global user.name "$GITLAB_USER_NAME"
+  - git config --global user.email "$GITLAB_USER_EMAIL"
+
 update_version:
   stage: setup
   before_script:

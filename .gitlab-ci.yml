@@ -7,46 +7,31 @@ cache:
     - /root/.m2/repository
 
 stages:
-  - setup
+  - build
+  - validation
   - test
-  - merge
   - package
   - deploy
 
-before_script:
-  - git config --global user.name "$GITLAB_USER_NAME"
-  - git config --global user.email "$GITLAB_USER_EMAIL"
-
-update_version:
-  stage: setup
-  before_script:
-    - PROJECT_VERSION=123456-SNAPSHOT
-    - RELEASE_BRANCH=release/$PROJECT_VERSION
-    - git checkout -b $RELEASE_BRANCH
+build:
+  stage: build
+  cache:
+    key: target
+    policy: push
+    paths:
+      - ./target
   script:
-    - git status
-    - mvn versions:set -DnewVersion=$PROJECT_VERSION -DgenerateBackupPoms=false
-    - git add .
-    - git commit -m "Update version to $PROJECT_VERSION"
-  only:
-    - /^feature\/.*$/
+    - mvn compile
+
+validate_version:
+  stage: validation
+  script:
+    - ivg validate
 
 test:
   stage: test
   script:
-    - git status
     - mvn clean test
-
-merge_feature:
-  stage: merge
-  script:
-    - git checkout dev
-    - git merge $RELEASE_BRANCH
-    - git push origin dev
-  after_script:
-    - git branch -D $RELEASE_BRANCH
-  only:
-    - /^feature\/.*$/
 
 package:
   stage: package
@@ -61,11 +46,27 @@ package:
     - dev
     - master
 
+deploy_to_staging:
+  stage: deploy
+  script:
+    - echo "Deploing to Staging..."
+    - echo "Deployed to Staging with success"
+  only:
+    - dev
+
 deploy_to_oss:
   stage: deploy
   before_script:
     - gpg2 --import --batch --passphrase "$MAVEN_GPG_PASSPHRASE" <<< "$MAVEN_GPG_KEY_VALUE"
   script:
     - mvn -P oss-release -DskipTests deploy
+  only:
+    - master
+
+deploy_to_production:
+  stage: deploy
+  script:
+    - echo "Deploing to Production..."
+    - echo "Deployed to Production with success"
   only:
     - master

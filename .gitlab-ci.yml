@@ -5,14 +5,43 @@ cache:
     - /root/.m2/repository
 
 stages:
+  - setup
   - test
+  - merge
   - package
   - deploy
+
+update_version:
+  stage: setup
+  before_script:
+    - PROJECT_VERSION=123456-SNAPSHOT
+    - RELEASE_BRANCH=release/$PROJECT_VERSION
+    - git checkout -b $RELEASE_BRANCH
+  script:
+    - git status
+    - mvn versions:set -DnewVersion=$PROJECT_VERSION -DgenerateBackupPoms=false
+    - git add .
+    - git commit -m "Update version to $PROJECT_VERSION"
+    #- git push origin $RELEASE_BRANCH
+  only:
+    /^feature\/.*$/
 
 test:
   stage: test
   script:
+    - git status
     - mvn clean test
+
+merge_feature:
+  stage: merge
+  script:
+    - git checkout dev
+    - git merge $RELEASE_BRANCH
+    - git push origin dev
+  after_script:
+    - git branch -D $RELEASE_BRANCH
+  only:
+    /^feature\/.*$/
 
 package:
   stage: package
@@ -23,10 +52,15 @@ package:
       - ./target
   script:
     - mvn package -DskipTests
+  only:
+    - dev
+    - master
 
-deploy:
+deploy_to_oss:
   stage: deploy
   before_script:
     - gpg2 --import --batch --passphrase "$MAVEN_GPG_PASSPHRASE" <<< "$MAVEN_GPG_KEY_VALUE"
   script:
     - mvn -P oss-release -DskipTests deploy
+  only:
+    - master

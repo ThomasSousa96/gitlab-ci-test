@@ -50,6 +50,7 @@ deploy_to_staging:
 
 deploy_to_oss:
   stage: deploy
+  when: manual
   before_script:
     - gpg2 --import --batch --passphrase "$MAVEN_GPG_PASSPHRASE" <<< "$MAVEN_GPG_KEY_VALUE"
   script:
@@ -59,6 +60,7 @@ deploy_to_oss:
 
 deploy_to_production:
   stage: deploy
+  when: manual
   script:
     - echo "Deploing to Production..."
     - echo "Deployed to Production with success"

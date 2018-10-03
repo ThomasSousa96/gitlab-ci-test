@@ -330,6 +330,10 @@ fi
 
 currentBranch=$(git rev-parse --abbrev-ref HEAD)
 
+if [ "$currentBranch" = "HEAD" ]; then
+    currentBranch=$(git rev-parse HEAD)
+fi
+
 showMessage "info" "Current git branch: \e[1m$currentBranch\e[0m"
 
 if [ "$(hasUncommittedChanges)" = "true" ]; then

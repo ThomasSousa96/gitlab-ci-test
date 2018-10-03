@@ -29,6 +29,8 @@ validate_version:
     - chmod +x ./ivg/ivg
     - IVG_PATH="$(pwd)/ivg"
     - PATH="$IVG_PATH:$PATH"
+    - git config --global user.email "$GITLAB_USER_EMAIL"
+    - git config --global user.name "$GITLAB_USER_NAME"
   script:
     - ivg validate
 

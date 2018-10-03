@@ -27,8 +27,10 @@ validate_version:
   stage: validation
   before_script:
     - chmod +x ./ivg/ivg
+    - IVG_PATH="$(pwd)/ivg"
+    - PATH="$IVG_PATH:$PATH"
   script:
-    - ./ivg/ validate
+    - ivg validate
 
 test:
   stage: test

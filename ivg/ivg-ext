@@ -10,10 +10,10 @@ setProjectVersion() {
 
 setPomVersion() {
     if $1 ; then
-        mvn versions:set -DnewVersion=$2 -DgenerateBackupPoms=false
+        mvn versions:set -DnewVersion="$2" -DgenerateBackupPoms=false
     else
         {
-            mvn versions:set -DnewVersion=$2 -DgenerateBackupPoms=false
+            mvn versions:set -DnewVersion="$2" -DgenerateBackupPoms=false
         } 1>&-
     fi
 }

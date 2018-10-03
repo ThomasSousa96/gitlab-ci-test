@@ -362,7 +362,7 @@ if [ -f "$versionPropertiesFile" ]; then
 
         tempBranch="$TEMP_BRANCH_PREFIX$(date +%s)"
 
-        git checkout -q -b $tempBranch $versionReference
+        git checkout -q -b "$tempBranch" "$versionReference"
 
         loadGitInfo
 
@@ -371,18 +371,18 @@ if [ -f "$versionPropertiesFile" ]; then
         fi
 
         if $onlyChangeSuffix ; then
-            saveProjectVersion $savedVersionTime $savedVersionSuffix
+            saveProjectVersion "$savedVersionTime" "$savedVersionSuffix"
         else
-            saveProjectVersion $savedVersionTime $versionSuffix
+            saveProjectVersion "$savedVersionTime" "$versionSuffix"
         fi
 
         showMessage "info" "Checking differences between saved version and head..."
 
         set +e
         if $verbose ; then
-            git diff --exit-code $currentBranch $tempBranch
+            git diff --exit-code "$currentBranch" "$tempBranch"
         else
-            git diff --exit-code $currentBranch $tempBranch >&-
+            git diff --exit-code "$currentBranch" "$tempBranch" >&-
         fi
         hasChanges=$?
         set -e
@@ -399,8 +399,8 @@ if [ -f "$versionPropertiesFile" ]; then
             fi
         fi
 
-        git checkout -q $currentBranch
-        git branch -q -D $tempBranch
+        git checkout -q "$currentBranch"
+        git branch -q -D "$tempBranch"
 
         if $hasChanges ; then
             if [ "$goal" = "$GOAL_VERSION_VALIDATION" ]; then
@@ -449,7 +449,7 @@ fi
 
 showMessage "info" "Generating new version: \e[1m$version\e[0m"
 
-saveProjectVersion $versionTime $versionSuffix
+saveProjectVersion "$versionTime" "$versionSuffix"
 
 showMessage "success" "$GOAL_VERSION_GENERATION SUCCESS" true true
 

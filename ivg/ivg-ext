@@ -1,0 +1,19 @@
+#!/bin/bash
+
+getProjectVersion() {
+    echo $(mvn help:evaluate -Dexpression=project.version | grep -v '\[')
+}
+
+setProjectVersion() {
+    setPomVersion "$1" "$2"
+}
+
+setPomVersion() {
+    if $1 ; then
+        mvn versions:set -DnewVersion="$2" -DgenerateBackupPoms=false
+    else
+        {
+            mvn versions:set -DnewVersion="$2" -DgenerateBackupPoms=false
+        } 1>&-
+    fi
+}

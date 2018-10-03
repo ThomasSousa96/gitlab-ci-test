@@ -328,7 +328,7 @@ if [ ! -d ".git" ]; then
     exit 1
 fi
 
-currentBranch=$(git branch | grep \* | cut -d ' ' -f 2)
+currentBranch=$(git rev-parse --abbrev-ref HEAD)
 
 showMessage "info" "Current git branch: \e[1m$currentBranch\e[0m"
 

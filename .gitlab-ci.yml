@@ -1,31 +1,20 @@
 image: infinityrefactoring/maven:3.5
 
 cache:
-  key: maven-dependencies
-  policy: pull
   paths:
     - /root/.m2/repository
 
 stages:
-  - build
   - validation
   - test
   - package
   - deploy
 
-build:
-  stage: build
-  cache:
-    key: target
-    policy: push
-    paths:
-      - ./target
-  script:
-    - mvn compile
-
 validate_version:
   stage: validation
   before_script:
+    - git status
+    - git branch
     - chmod +x ./ivg/ivg
     - IVG_PATH="$(pwd)/ivg"
     - PATH="$IVG_PATH:$PATH"

@@ -6,13 +6,16 @@ cache:
     - /root/.m2/repository
 
 stages:
-  - validation
+  - verify
   - test
   - package
   - deploy
 
-validate_version:
-  stage: validation
+variables:
+  PROJECT_ID: $(mvn -q -Dexec.executable=echo -Dexec.args='${project.groupId}/${project.artifactId}/${project.version}' --non-recursive exec:exec)
+
+version_validation:
+  stage: verify
   before_script:
     - chmod +x ./ivg/ivg
     - IVG_PATH="$(pwd)/ivg"
@@ -21,6 +24,26 @@ validate_version:
     - git config --global user.name "$GITLAB_USER_NAME"
   script:
     - ivg validate
+
+code_quality:
+  stage: verify
+  cache:
+    paths:
+      - /root/.sonar/cache
+  script:
+    - mvn verify sonar:sonar \
+      -DskipTests \ 
+      -Dsonar.projectKey=$SONAR_PROJECT_KEY \
+      -Dsonar.organization=$SONAR_ORGANIZATION \
+      -Dsonar.host.url=$SONAR_HOST_URL \
+      -Dsonar.login=$SONAR_LOGIN \
+      -Dsonar.gitlab.project_id=$CI_PROJECT_PATH \
+      -Dsonar.gitlab.ref_name=$CI_COMMIT_REF_NAME \
+      -Dsonar.gitlab.commit_sha=$CI_COMMIT_SHA \
+      -Dsonar.gitlab.failure_notification_mode=exit-code
+  environment:
+    name: code-quality
+    url: $SONAR_DASHBOARD_URL
 
 test:
   stage: test
@@ -40,29 +63,49 @@ package:
     - dev
     - master
 
-deploy_to_staging:
+deploy_staging_maven_central:
+  stage: deploy
+  script:
+    - echo "Deploing to staging maven central..."
+    - echo "Deployed to staging maven central with success"
+  environment:
+    name: staging-artifact/$PROJECT_ID
+    url: https://oss.sonatype.org/content/repositories/snapshots/$PROJECT_ID
+  only:
+    - dev
+
+deploy_staging:
   stage: deploy
   script:
     - echo "Deploing to Staging..."
     - echo "Deployed to Staging with success"
+  environment:
+    name: staging/$PROJECT_ID
+    url: https://github.com/ThomasSousa96/gitlab-ci-test
   only:
     - dev
 
-deploy_to_oss:
+deploy_maven_central:
   stage: deploy
   when: manual
   before_script:
     - gpg2 --import --batch --passphrase "$MAVEN_GPG_PASSPHRASE" <<< "$MAVEN_GPG_KEY_VALUE"
   script:
     - mvn -P oss-release -DskipTests deploy
+  environment:
+    name: artifact/$PROJECT_ID
+    url: https://search.maven.org/artifact/$PROJECT_ID/pom
   only:
     - master
 
-deploy_to_production:
+deploy_production:
   stage: deploy
   when: manual
   script:
     - echo "Deploing to Production..."
     - echo "Deployed to Production with success"
+  environment:
+    name: production
+    url: http://infinityrefactoring.com
   only:
     - master

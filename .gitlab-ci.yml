@@ -23,11 +23,7 @@ version_validation:
     - git config --global user.email "$GITLAB_USER_EMAIL"
     - git config --global user.name "$GITLAB_USER_NAME"
   script:
-    - ivg validate --verbose
-  artifacts:
-    paths:
-      - ./src/main/resources/META-INF/source-code.properties
-
+    - ivg validate
 
 code_quality:
   stage: verify

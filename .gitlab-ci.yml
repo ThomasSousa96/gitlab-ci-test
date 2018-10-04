@@ -23,7 +23,7 @@ version_validation:
     - git config --global user.email "$GITLAB_USER_EMAIL"
     - git config --global user.name "$GITLAB_USER_NAME"
   script:
-    - ivg validate
+    - ivg validate --verbose
 
 code_quality:
   stage: verify
@@ -32,7 +32,7 @@ code_quality:
       - /root/.sonar/cache
   script:
     - mvn verify sonar:sonar \
-      -DskipTests \ 
+      -DskipTests \
       -Dsonar.projectKey="$SONAR_PROJECT_KEY" \
       -Dsonar.organization="$SONAR_ORGANIZATION" \
       -Dsonar.host.url="$SONAR_HOST_URL" \
@@ -59,6 +59,10 @@ package:
       - ./target
   script:
     - mvn package -DskipTests
+  artifacts:
+    paths:
+      - ./target/*.jar
+      - ./target/*.jar
   only:
     - dev
     - master

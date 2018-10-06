@@ -7,7 +7,6 @@ stages:
   - deploy
 
 cache:
-  policy: pull
   paths:
     - /root/.m2/repository
 
@@ -24,6 +23,8 @@ version_validation:
     - mkdir -p ~/.ssh
     - echo "$SSH_PUBLIC_KEY" > ~/.ssh/id_rsa.pub
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa.pub
     - eval $(ssh-agent -s)
     - ssh-add ~/.ssh/id_rsa
     - chmod +x ./ivg/ivg

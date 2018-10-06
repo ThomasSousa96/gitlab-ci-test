@@ -34,7 +34,8 @@ version_validation:
     - git config --global user.name "$GITLAB_USER_NAME"
   script:
     - ivg generate
-    - git push
+    - echo $CI_COMMIT_REF_NAME
+    - git push origin HEAD:$CI_COMMIT_REF_NAME
     - echo $(git rev-parse HEAD)
 
 

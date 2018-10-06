@@ -24,8 +24,8 @@ version_validation:
     - echo "$SSH_PUBLIC_KEY" > ~/.ssh/id_rsa.pub
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-    - chmod 644 ~/.ssh/id_rsa.pub
-    - chown -R $(whoami):$(whoami) ~/.ssh
+    - chmod 600 ~/.ssh/id_rsa.pub
+    - printf "Host $SSH_HOST\n    StrictHostKeyChecking no" >> ~/.ssh/config
     - ls -la ~/.ssh
     - eval $(ssh-agent -s)
     - ssh-add ~/.ssh/id_rsa
@@ -34,12 +34,12 @@ version_validation:
     - PATH="$IVG_PATH:$PATH"
     - git config --global user.email "$GIT_USER_EMAIL"
     - git config --global user.name "$GIT_USER_NAME"
-    - git remote set-url origin "$GIT_ORIGIN_HOST:$GIT_ORIGIN_REPOSITORY"
-    - ssh -T $GIT_ORIGIN_HOST
+    - SSH_USER=${SSH_USER:-git}
+    - ssh -T $SSH_USER@$SSH_HOST
   script:
     - ivg generate
     - echo $CI_COMMIT_REF_NAME
-    - git push origin HEAD:$CI_COMMIT_REF_NAME
+    - git push "$SSH_USER@$SSH_HOST:$GIT_ORIGIN_REPOSITORY" HEAD:$CI_COMMIT_REF_NAME
     - echo $(git rev-parse HEAD)
 
 

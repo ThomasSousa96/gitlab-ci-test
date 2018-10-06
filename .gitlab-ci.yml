@@ -35,7 +35,7 @@ version_validation:
   script:
     - ivg generate
     - echo $CI_COMMIT_REF_NAME
-    - git push origin HEAD:$CI_COMMIT_REF_NAME
+    - git push origin $CI_COMMIT_REF_NAME
     - echo $(git rev-parse HEAD)
 
 

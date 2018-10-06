@@ -25,16 +25,17 @@ version_validation:
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa.pub
-    - printf "Host $SSH_HOST\n    StrictHostKeyChecking no" >> ~/.ssh/config
+    - SSH_USER=${SSH_USER:-git}
+    - SSH_ID=~/.ssh/id_rsa
+    - printf "\nHost $SSH_HOST\n    HostName $SSH_HOST\n    User $SSH_USER\n    IdentityFile \"$SSH_ID\"\n    StrictHostKeyChecking no" >> ~/.ssh/config
     - ls -la ~/.ssh
     - eval $(ssh-agent -s)
     - ssh-add ~/.ssh/id_rsa
     - chmod +x ./ivg/ivg
     - IVG_PATH="$(pwd)/ivg"
     - PATH="$IVG_PATH:$PATH"
-    - git config --global user.email "$GIT_USER_EMAIL"
-    - git config --global user.name "$GIT_USER_NAME"
-    - SSH_USER=${SSH_USER:-git}
+    - git config --global user.email "$GITLAB_USER_EMAIL"
+    - git config --global user.name "$GITLAB_USER_NAME"
     - set +e
     - ssh -T $SSH_USER@$SSH_HOST
     - set -e

@@ -1,6 +1,5 @@
 # Test
 
-
 [![pipeline status](https://gitlab.com/ThomasSousa96/gitlab-ci-test/badges/feature/b/pipeline.svg)](https://gitlab.com/ThomasSousa96/gitlab-ci-test/commits/feature/b)
 
 [![alert_status](https://sonarcloud.io/api/project_badges/measure?project=gitlab-ci-test&metric=alert_status)](https://sonarcloud.io/dashboard?id=gitlab-ci-test)

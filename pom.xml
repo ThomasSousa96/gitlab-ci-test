@@ -9,7 +9,7 @@
 		<version>1.0.0</version>
 	</parent>
 	<artifactId>gitlab-ci-test</artifactId>
-	<version>2018.10.04.04.50.50</version>
+	<version>2018.10.06.16.12.16</version>
 	<packaging>jar</packaging>
 
 	<name>Gitlab ci test</name>

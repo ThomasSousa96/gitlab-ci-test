@@ -2,7 +2,7 @@
 
 set -e
 
-IVG_VERSION="0.0.1-SNAPSHOT"
+IVG_VERSION="0.0.1"
 
 #Version properties
 PROPERTY_PROJECT_VERSION="project.version"
@@ -24,6 +24,9 @@ IVG_EXT_FILE="ivg-ext"
 PRIMARY_IVG_EXT_FILE="$(dirname "$0")/$IVG_EXT_FILE"
 SECONDARY_IVG_EXT_FILE="$(pwd)/$IVG_EXT_FILE"
 TEMP_BRANCH_PREFIX="ivg/temp"
+PUSH=false
+PUSH_ORIGIN=""
+PUSH_BRANCH=""
 STRICT=false
 QUIET=false
 VERBOSE=false
@@ -36,6 +39,9 @@ ivgExtFile=""
 fixup=$FIXUP
 autosquash=$AUTOSQUASH
 gitCommitMessage=$GIT_COMMIT_MESSAGE
+push=$PUSH
+pushOrigin=$PUSH_ORIGIN
+pushBranch=$PUSH_BRANCH
 strict=$STRICT
 quiet=$QUIET
 verbose=$VERBOSE
@@ -216,7 +222,7 @@ for var in "$@"; do
         quiet=false
         showHeaderMessage
         showMessage "info" "A flexible version generator for projects that uses the Git as control version."
-        showMessage "info" "The generated version is based in the git commit time and the git commit hash and an optional suffix."
+        showMessage "info" "The generated version is based in the git commit time and an optional suffix."
         showMessage "info"
         showMessage "info" "\e[1mUsage\e[0m:"
         showMessage "info" "    ivg [<goal>] [<options>]"
@@ -261,6 +267,15 @@ for var in "$@"; do
         showMessage "info" "--autosquash         Enable the use of the \"git rebase -i --autosquash\" command to join the new commit with the previous commit. This only is enabled if the \"--fixup\" too is enabled"
         showMessage "info" "                          Default value: $FIXUP"
         showMessage "info" "                          Example: --autosquash, --autosquash=false, --autosquash=true"
+        showMessage "info" "--push                Execute the \"git push\" command if a new version is generated"
+        showMessage "info" "                          Default value: $PUSH"
+        showMessage "info" "                          Example: --push, --push=false, --push=true"
+        showMessage "info" "--push-origin         The origin that will be used to push the changes"
+        showMessage "info" "                          Default value: $PUSH_ORIGIN"
+        showMessage "info" "                          Example: --push-origin=$PUSH_ORIGIN"
+        showMessage "info" "--push-branch         The origin branch that will be used to push the changes"
+        showMessage "info" "                          Default value: $PUSH_BRANCH"
+        showMessage "info" "                          Example: --push-branch=$PUSH_BRANCH"
         showMessage "info" "--strict              Enable the strict mode"
         showMessage "info" "                          Default value: $STRICT"
         showMessage "info" "                          Example: --strict, --strict=false, --strict=true"
@@ -459,4 +474,8 @@ showMessage "success" "$GOAL_VERSION_GENERATION SUCCESS" true true
 
 if $autosquash && $fixup ; then
     GIT_SEQUENCE_EDITOR=true git rebase -i --autosquash HEAD~2
+fi
+
+if $push ; then
+    git push $pushOrigin $pushBranch
 fi

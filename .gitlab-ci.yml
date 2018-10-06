@@ -21,8 +21,9 @@ before_script:
 version_validation:
   stage: verify
   before_script:
-    - mkdir -p ~/.ssh 
-    - echo "$SSH_KEY" > ~/.ssh/id_rsa.pub
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PUBLIC_KEY" > ~/.ssh/id_rsa.pub
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - eval $(ssh-agent -s)
     - ssh-add ~/.ssh/id_rsa
     - chmod +x ./ivg/ivg

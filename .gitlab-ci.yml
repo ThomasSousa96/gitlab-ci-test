@@ -21,6 +21,7 @@ before_script:
 version_validation:
   stage: verify
   before_script:
+    - mkdir -p ~/.ssh 
     - echo "$SSH_KEY" > ~/.ssh/id_rsa.pub
     - eval $(ssh-agent -s)
     - ssh-add ~/.ssh/id_rsa

@@ -35,7 +35,9 @@ version_validation:
     - git config --global user.email "$GIT_USER_EMAIL"
     - git config --global user.name "$GIT_USER_NAME"
     - SSH_USER=${SSH_USER:-git}
+    - set +e
     - ssh -T $SSH_USER@$SSH_HOST
+    - set -e
   script:
     - ivg generate
     - echo $CI_COMMIT_REF_NAME

@@ -1,7 +1,6 @@
-image: infinityrefactoring/maven:3.5
-
-services:
-  - bash
+image:
+  name: infinityrefactoring/maven:3.5
+  entrypoint: ["/usr/local/bin/docker-entrypoint", "bash"]
 
 stages:
   - setup

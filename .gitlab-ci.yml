@@ -34,7 +34,7 @@ version_update:
     - git status
     - ls -la
     - git status
-    - ivg generate --push --push-origin=$SSH_USER@$SSH_HOST:$GIT_ORIGIN_REPOSITORY --push-branch=HEAD:$CI_COMMIT_REF_NAME
+    - ivg generate --push --push-origin=$SSH_USER@$SSH_HOST:$GIT_ORIGIN_REPOSITORY --push-branch=HEAD:$CI_COMMIT_REF_NAME --use-error-exit-code
 
 code_quality:
   stage: verify

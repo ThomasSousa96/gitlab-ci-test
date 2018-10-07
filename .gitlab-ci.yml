@@ -27,7 +27,9 @@ version_update:
   script:
     - pwd
     - realpath ~/
+    - ls -la
     - git status
+    - cd $(pwd)
     - ivg generate --push "--push-origin=$SSH_USER@$SSH_HOST:$GIT_ORIGIN_REPOSITORY" "--push-branch=HEAD:$CI_COMMIT_REF_NAME" --verbose
 
 

@@ -12,6 +12,8 @@ cache:
   paths:
     - /root/.m2/repository
 
+before_script:
+  - echo "BEFORE ALL"
 
 variables:
   SSH_USER: git

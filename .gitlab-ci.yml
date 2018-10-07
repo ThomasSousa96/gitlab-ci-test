@@ -27,6 +27,8 @@ version_update:
   script:
     - pwd
     - realpath ~/
+    - echo $HOME
+    - whoami
     - ls -la
     - git status
     - cd "$(pwd)/~/"

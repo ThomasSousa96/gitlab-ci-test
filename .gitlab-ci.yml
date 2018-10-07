@@ -32,9 +32,9 @@ version_update:
 set_tag:
   when: manual
   script:
-    - version=$(ivg get-version)
+    - version=$(ivg get-version --quiet)
     - echo "Creating tag $version"
-    - git tag -a $version -m "Version $version"
+    - git tag -a "$version" -m "Version $version"
     - git push $ORIGIN $version
 
 

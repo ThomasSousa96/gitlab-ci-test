@@ -1,0 +1,9 @@
+#!/bin/bash
+
+getProjectVersion() {
+    echo "AAAAAAAAAA 1245678765432"
+}
+
+setProjectVersion() {
+    echo "SET VERSION"
+}

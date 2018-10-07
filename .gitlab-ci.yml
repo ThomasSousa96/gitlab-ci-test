@@ -26,13 +26,15 @@ cache:
 version_update:
   stage: setup
   script:
-    - ivg generate --push --push-origin=$ORIGIN --push-branch=HEAD:$CI_COMMIT_REF_NAME --use-error-exit-code
+    - ivg generate --push --push-origin=$ORIGIN --push-branch=HEAD:$CI_COMMIT_REF_NAME --autosquash=false --use-error-exit-code
 
 
 set_tag:
+  when: manual
   script:
     - version=$(ivg get-version)
-    - git tag -a version -m "Version $version"
+    - echo "Creating tag $version"
+    - git tag -a $version -m "Version $version"
     - git push $ORIGIN $version
 
 

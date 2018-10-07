@@ -29,11 +29,11 @@ version_update:
     - realpath ~/
     - ls -la
     - git status
-    - rm -rf $(pwd)/~/
-    - ls -la
-    - git status
-    - ivg generate --push "--push-origin=$SSH_USER@$SSH_HOST:$GIT_ORIGIN_REPOSITORY" "--push-branch=HEAD:$CI_COMMIT_REF_NAME" --verbose
-
+    - #rm -rf $(pwd)/~/
+    - #ls -la
+    - #git status
+    - ivg generate
+    - git push $SSH_USER@$SSH_HOST:$GIT_ORIGIN_REPOSITORY HEAD:$CI_COMMIT_REF_NAME
 
 code_quality:
   stage: verify

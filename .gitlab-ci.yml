@@ -7,7 +7,6 @@ variables:
   PROJECT_ID: $(mvn -q -Dexec.executable=echo -Dexec.args='${project.groupId}/${project.artifactId}/${project.version}' --non-recursive exec:exec)
 
 before_script:
-  - echo $PROJECT_ID
   - /usr/local/bin/docker-entrypoint
 
 stages:
@@ -26,21 +25,23 @@ cache:
 version_update:
   stage: setup
   script:
-    - pwd
-    - realpath ~/
-    - echo $HOME
-    - whoami
-    - ls -la
-    - git status
-    - ls -la
-    - git status
     - ivg generate --push --push-origin=$SSH_USER@$SSH_HOST:$GIT_ORIGIN_REPOSITORY --push-branch=HEAD:$CI_COMMIT_REF_NAME --use-error-exit-code
 
 code_quality:
   stage: verify
-  #cache: paths: - /root/.sonar/cache
+  cache:
+    paths:
+      - /root/.m2/repository
+      - /root/.sonar/cache
+  before_script:
+    - chmod +x ./get-target-branch
+    - SONAR_OPTIONS="-Dsonar.projectKey=\"$SONAR_PROJECT_KEY\" -Dsonar.organization=\"$SONAR_ORGANIZATION\" 
+    - SONAR_OPTIONS="$SONAR_OPTIONS -Dsonar.host.url=\"$SONAR_HOST_URL\" -Dsonar.login=\"$SONAR_LOGIN\""
+    - SONAR_OPTIONS="$SONAR_OPTIONS -Dsonar.branch.name=\"$CI_COMMIT_REF_NAME\" -Dsonar.branch.target=$(./get-target-branch $CI_COMMIT_REF_NAME)"
+    - SONAR_OPTIONS="$SONAR_OPTIONS -DskipTests"
   script:
-    - mvn verify sonar:sonar -DskipTests -Dsonar.projectKey="$SONAR_PROJECT_KEY" -Dsonar.organization="$SONAR_ORGANIZATION" -Dsonar.host.url="$SONAR_HOST_URL" -Dsonar.login="$SONAR_LOGIN" -Dsonar.gitlab.project_id="$CI_PROJECT_PATH" -Dsonar.gitlab.ref_name="$CI_COMMIT_REF_NAME" -Dsonar.gitlab.commit_sha="$CI_COMMIT_SHA" -Dsonar.gitlab.failure_notification_mode=exit-code
+    - mvn verify sonar:sonar $SONAR_OPTIONS
+    #" -Dsonar.gitlab.project_id="$CI_PROJECT_PATH" -Dsonar.gitlab.ref_name="$CI_COMMIT_REF_NAME" -Dsonar.gitlab.commit_sha="$CI_COMMIT_SHA" -Dsonar.gitlab.failure_notification_mode=exit-code
   environment:
     name: code-quality
     url: $SONAR_DASHBOARD_URL

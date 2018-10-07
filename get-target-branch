@@ -1,0 +1,18 @@
+#!/bin/bash
+
+CURRENT_BRANCH=$1
+DEV_BRANCH=${2:-dev}
+FEATURE_BRANCH=${3:-^feature.*}
+RELEASE_BRANCH=${4:-^release.*}
+HOTFIX_BRANCH=${5:-^hotfix.*}
+PRODUCTION_BRANCH=${6:-master}
+
+if [[ "$CURRENT_BRANCH" =~ $FEATURE_BRANCH ]]; then
+    echo "$DEV_BRANCH"
+elif [[ "$CURRENT_BRANCH" =~ $DEV_BRANCH ]] \
+    || [[ "$CURRENT_BRANCH" =~ $RELEASE_BRANCH ]] \
+    || [[ "$CURRENT_BRANCH" =~ $HOTFIX_BRANCH ]]; then
+    echo "$PRODUCTION_BRANCH"
+else
+    echo "$CURRENT_BRANCH"
+fi

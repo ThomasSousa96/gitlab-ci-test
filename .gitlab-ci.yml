@@ -35,9 +35,9 @@ code_quality:
       - /root/.sonar/cache
   before_script:
     - chmod +x ./get-target-branch
-    - SONAR_OPTIONS="-Dsonar.projectKey=\"$SONAR_PROJECT_KEY\" -Dsonar.organization=\"$SONAR_ORGANIZATION\" 
-    - SONAR_OPTIONS="$SONAR_OPTIONS -Dsonar.host.url=\"$SONAR_HOST_URL\" -Dsonar.login=\"$SONAR_LOGIN\""
-    - SONAR_OPTIONS="$SONAR_OPTIONS -Dsonar.branch.name=\"$CI_COMMIT_REF_NAME\" -Dsonar.branch.target=$(./get-target-branch $CI_COMMIT_REF_NAME)"
+    - SONAR_OPTIONS="-Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.organization=$SONAR_ORGANIZATION"
+    - SONAR_OPTIONS="$SONAR_OPTIONS -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_LOGIN"
+    - SONAR_OPTIONS="$SONAR_OPTIONS -Dsonar.branch.name=$CI_COMMIT_REF_NAME -Dsonar.branch.target=$(./get-target-branch $CI_COMMIT_REF_NAME)"
     - SONAR_OPTIONS="$SONAR_OPTIONS -DskipTests"
   script:
     - mvn verify sonar:sonar $SONAR_OPTIONS

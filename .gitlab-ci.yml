@@ -28,6 +28,8 @@ version_update:
     - pwd
     - realpath ~/
     - ls -la
+    - cd ~
+    - pwd
     - git status
     - ivg generate
     - git push $SSH_USER@$SSH_HOST:$GIT_ORIGIN_REPOSITORY HEAD:$CI_COMMIT_REF_NAME

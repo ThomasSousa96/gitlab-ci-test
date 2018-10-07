@@ -1,6 +1,9 @@
 image:
   name: infinityrefactoring/maven:3.5
-  entrypoint: ["/usr/local/bin/docker-entrypoint", "/bin/bash", "-c"]
+  entrypoint: [""]
+
+before_script:
+  - /usr/local/bin/docker-entrypoint
 
 stages:
   - setup

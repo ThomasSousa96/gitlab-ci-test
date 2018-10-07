@@ -2,9 +2,6 @@ image:
   name: infinityrefactoring/maven:3.5
   entrypoint: [""]
 
-before_script:
-  - /usr/local/bin/docker-entrypoint
-
 stages:
   - setup
   - verify
@@ -24,6 +21,8 @@ variables:
 
 version_update:
   stage: setup
+  before_script:
+    - /usr/local/bin/docker-entrypoint
   script:
     - pwd
     - realpath ~/

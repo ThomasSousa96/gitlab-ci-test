@@ -25,7 +25,7 @@ variables:
 version_update:
   stage: setup
   script:
-    - ivg generate --push "--push-origin=$SSH_USER@$SSH_HOST:$GIT_ORIGIN_REPOSITORY" "--push-branch=HEAD:$CI_COMMIT_REF_NAME"
+    - ivg generate --push "--push-origin=$SSH_USER@$SSH_HOST:$GIT_ORIGIN_REPOSITORY" "--push-branch=HEAD:$CI_COMMIT_REF_NAME" --verbose
 
 
 code_quality:

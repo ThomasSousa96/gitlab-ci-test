@@ -44,15 +44,10 @@ code_quality:
     paths:
       - /root/.m2/repository
       - /root/.sonar/cache
-  before_script:
-    - chmod +x ./get-target-branch
-    - SONAR_OPTIONS="-Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.organization=$SONAR_ORGANIZATION"
-    - SONAR_OPTIONS="$SONAR_OPTIONS -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_LOGIN"
-    - SONAR_OPTIONS="$SONAR_OPTIONS -Dsonar.branch.name=$CI_COMMIT_REF_NAME -Dsonar.branch.target=$(./get-target-branch $CI_COMMIT_REF_NAME)"
-    - SONAR_OPTIONS="$SONAR_OPTIONS -DskipTests"
+  variables:
+    SONAR_BRANCH_NAME: $CI_COMMIT_REF_NAME
   script:
-    - mvn verify sonar:sonar $SONAR_OPTIONS
-    #" -Dsonar.gitlab.project_id="$CI_PROJECT_PATH" -Dsonar.gitlab.ref_name="$CI_COMMIT_REF_NAME" -Dsonar.gitlab.commit_sha="$CI_COMMIT_SHA" -Dsonar.gitlab.failure_notification_mode=exit-code
+    - mvn-sonar
   environment:
     name: code-quality
     url: $SONAR_DASHBOARD_URL

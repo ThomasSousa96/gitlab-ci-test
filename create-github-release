@@ -1,0 +1,14 @@
+#!/bin/bash
+
+curl --header "Content-Type: application/json" \
+    --request POST \
+    --data \
+        '{\
+            "tag_name": "v$version",\
+            "name": "v$version",\
+            "body": "Version $version",\
+            "draft": false,\
+            "prerelease": false\
+        }' \
+    https://api.github.com/repos/ThomasSousa96/gitlab-ci-test/releases
+

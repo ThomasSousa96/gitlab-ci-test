@@ -91,11 +91,14 @@ deploy:maven_central:
   environment:
     name: artifact/$GROUP_ID/$ARTIFACT_ID
     url: https://search.maven.org/search?q=g:$GROUP_ID%20AND%20a:$ARTIFACT_ID
+  before_script:
+    - chmod +x ./create-github-release
   script:
     - version=$(ivg get-version --quiet)
     - echo "mvn -P oss-release -DskipTests deploy"
     - git tag -a "v$version" -m "Version $version"
     - git push $ORIGIN $version
+    - create-github-release
   dependencies:
     - package
   only:

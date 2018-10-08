@@ -2,9 +2,14 @@ image:
   name: infinityrefactoring/maven:3.5
   entrypoint: [""]
 
+cache:
+  paths:
+    - maven.repository/
+
 variables:
   SSH_USER: git
   ORIGIN: $SSH_USER@$SSH_HOST:$GIT_ORIGIN_REPOSITORY
+  MAVEN_OPTS: "--batch-mode -Dmaven.repo.local=maven.repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN"
 
 before_script:
   - /usr/local/bin/docker-entrypoint
@@ -15,10 +20,6 @@ stages:
   - test
   - package
   - deploy
-
-cache:
-  paths:
-    - /root/.m2/repository
 
 version_update:
   stage: setup
@@ -40,7 +41,7 @@ code_quality:
   stage: verify
   cache:
     paths:
-      - /root/.m2/repository
+      - maven.repository/
       - /root/.sonar/cache
   variables:
     SONAR_BRANCH_NAME: $CI_COMMIT_REF_NAME
@@ -63,18 +64,16 @@ package:
     paths:
       - target/*.jar
       - target/*.war
+    expire_in: 6 mos 1 day
   only:
     - develop
     - master
 
 deploy:staging_maven_central:
   stage: deploy
-  variables:
-    GROUP_ID: com/infinityrefactoring
-    ARTIFACT_ID: gitlab-ci-test
   environment:
-    name: staging-artifact/$GROUP_ID/$ARTIFACT_ID
-    url: https://oss.sonatype.org/content/repositories/snapshots/$GROUP_ID/$ARTIFACT_ID
+    name: staging-artifact/$CI_PIPELINE_ID
+    url: https://oss.sonatype.org/content/repositories/snapshots/com/infinityrefactoring/gitlab-ci-test
   script:
     - echo "mvn -P oss-release -DskipTests deploy"
   dependencies:
@@ -85,12 +84,9 @@ deploy:staging_maven_central:
 deploy:maven_central:
   stage: deploy
   when: manual
-  variables:
-    GROUP_ID: com.infinityrefactoring
-    ARTIFACT_ID: gitlab-ci-test
   environment:
-    name: artifact/$GROUP_ID/$ARTIFACT_ID
-    url: https://search.maven.org/search?q=g:$GROUP_ID%20AND%20a:$ARTIFACT_ID
+    name: artifact/$CI_PIPELINE_ID
+    url: https://search.maven.org/search?q=g:com.infinityrefactoring%20AND%20a:gitlab-ci-test
   before_script:
     - chmod +x ./create-github-release
   script:

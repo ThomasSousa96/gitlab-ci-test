@@ -9,7 +9,7 @@ cache:
 variables:
   SSH_USER: git
   ORIGIN: $SSH_USER@$SSH_HOST:$GIT_ORIGIN_REPOSITORY
-  MAVEN_OPTS: "--batch-mode -Dmaven.repo.local=maven.repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN"
+  MAVEN_OPTS: "-Dmaven.repo.local=maven.repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN"
 
 before_script:
   - /usr/local/bin/docker-entrypoint

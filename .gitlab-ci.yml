@@ -4,7 +4,6 @@ image:
 
 variables:
   SSH_USER: git
-  PROJECT_ID: $(mvn -q -Dexec.executable=echo -Dexec.args='${project.groupId}/${project.artifactId}/${project.version}' --non-recursive exec:exec)
   ORIGIN: $SSH_USER@$SSH_HOST:$GIT_ORIGIN_REPOSITORY
 
 before_script:
@@ -17,24 +16,25 @@ stages:
   - package
   - deploy
 
-
 cache:
   paths:
     - /root/.m2/repository
 
-
 version_update:
   stage: setup
   script:
-    - ivg generate --push --push-origin=$ORIGIN --push-branch=HEAD:$CI_COMMIT_REF_NAME --use-error-exit-code
+    - ivg generate --push --push-origin=$ORIGIN --push-branch=HEAD:$CI_COMMIT_REF_NAME --autosquash=false --use-error-exit-code
+  except:
+    - develop
+    - master
 
-
-set_tag:
+version_validation:
+  stage: verify
   script:
-    - version=$(ivg get-version)
-    - git tag -a version -m "Version $version"
-    - git push $ORIGIN $version
-
+    - ivg validate
+  only:
+    - develop
+    - master
 
 code_quality:
   stage: verify
@@ -42,90 +42,64 @@ code_quality:
     paths:
       - /root/.m2/repository
       - /root/.sonar/cache
-  before_script:
-    - chmod +x ./get-target-branch
-    - SONAR_OPTIONS="-Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.organization=$SONAR_ORGANIZATION"
-    - SONAR_OPTIONS="$SONAR_OPTIONS -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_LOGIN"
-    - SONAR_OPTIONS="$SONAR_OPTIONS -Dsonar.branch.name=$CI_COMMIT_REF_NAME -Dsonar.branch.target=$(./get-target-branch $CI_COMMIT_REF_NAME)"
-    - SONAR_OPTIONS="$SONAR_OPTIONS -DskipTests"
+  variables:
+    SONAR_BRANCH_NAME: $CI_COMMIT_REF_NAME
   script:
-    - mvn verify sonar:sonar $SONAR_OPTIONS
-    #" -Dsonar.gitlab.project_id="$CI_PROJECT_PATH" -Dsonar.gitlab.ref_name="$CI_COMMIT_REF_NAME" -Dsonar.gitlab.commit_sha="$CI_COMMIT_SHA" -Dsonar.gitlab.failure_notification_mode=exit-code
+    - mvn-sonar
   environment:
     name: code-quality
     url: $SONAR_DASHBOARD_URL
-
 
 test:
   stage: test
   script:
     - mvn clean test
 
-
 package:
   stage: package
-  cache:
-    key: target
-    policy: push
-    paths:
-      - ./target
   script:
     - mvn package -DskipTests
   artifacts:
     paths:
-      - ./target/*.jar
-      - ./target/*.jar
+      - target/*.jar
+      - target/*.war
   only:
-    - dev
+    - develop
     - master
 
-
-deploy_staging_maven_central:
+deploy:staging_maven_central:
   stage: deploy
-  script:
-    - echo "Deploing to staging maven central..."
-    - echo "Deployed to staging maven central with success"
+  variables:
+    GROUP_ID: com/infinityrefactoring
+    ARTIFACT_ID: gitlab-ci-test
   environment:
-    name: staging-artifact/$PROJECT_ID
-    url: https://oss.sonatype.org/content/repositories/snapshots/$PROJECT_ID
-  only:
-    - dev
-
-
-deploy_staging:
-  stage: deploy
+    name: staging-artifact/$GROUP_ID/$ARTIFACT_ID
+    url: https://oss.sonatype.org/content/repositories/snapshots/$GROUP_ID/$ARTIFACT_ID
   script:
-    - echo "Deploing to Staging..."
-    - echo "Deployed to Staging with success"
-  environment:
-    name: staging/$PROJECT_ID
-    url: https://github.com/ThomasSousa96/gitlab-ci-test
+    - echo "mvn -P oss-release -DskipTests deploy"
+  dependencies:
+    - package
   only:
-    - dev
+    - develop
 
-
-deploy_maven_central:
+deploy:maven_central:
   stage: deploy
   when: manual
+  variables:
+    GROUP_ID: com.infinityrefactoring
+    ARTIFACT_ID: gitlab-ci-test
+  environment:
+    name: artifact/$GROUP_ID/$ARTIFACT_ID
+    url: https://search.maven.org/search?q=g:$GROUP_ID%20AND%20a:$ARTIFACT_ID
   before_script:
-    - gpg2 --import --batch --passphrase "$MAVEN_GPG_PASSPHRASE" <<< "$MAVEN_GPG_KEY_VALUE"
+    - chmod +x ./create-github-release
   script:
-    - mvn -P oss-release -DskipTests deploy
-  environment:
-    name: artifact/$PROJECT_ID
-    url: https://search.maven.org/artifact/$PROJECT_ID/pom
-  only:
-    - master
-
-
-deploy_production:
-  stage: deploy
-  when: manual
-  script:
-    - echo "Deploing to Production..."
-    - echo "Deployed to Production with success"
-  environment:
-    name: production
-    url: http://infinityrefactoring.com
+    - version=$(ivg get-version --quiet)
+    - echo "mvn -P oss-release -DskipTests deploy"
+    - git tag -a "v$version" -m "Version $version"
+    - git push $ORIGIN $version
+    - create-github-release
+  dependencies:
+    - package
   only:
     - master

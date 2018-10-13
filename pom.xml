@@ -29,15 +29,33 @@
 			<url>https://github.com/ThomasSousa96</url>
 			<organization>InfinityRefactoring</organization>
 			<organizationUrl>https://infinityrefactoring.com</organizationUrl>
+			<properties>
+				<picUrl>https://lh3.googleusercontent.com/-I_EKtPAN6ig/WxGPQfehmII/AAAAAAAAGQA/_PJ9tqgiQrUDMsr34LvHnRc_zOXnh34ngCEwYBhgL/w140-h140-p/Thom%25C3%25A1s%2BSousa%2BSilva.jpg</picUrl>
+			</properties>
+			<roles>
+				<role>maintainer</role>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
 		</developer>
 	</developers>
 
 	<scm>
-		<url>https://github.com/ThomasSousa96/gitlab-ci-test</url>
-		<connection>scm:git:https://github.com/ThomasSousa96/gitlab-ci-test.git</connection>
-		<developerConnection>scm:git:https://github.com/ThomasSousa96/gitlab-ci-test.git</developerConnection>
+		<url>${scm-url-base}/tree/${project.scm.tag}</url>
+		<connection>scm:git:${scm-url-base}.git</connection>
+		<developerConnection>scm:git:${scm-url-base}.git</developerConnection>
 		<tag>master</tag>
 	</scm>
+
+	<issueManagement>
+		<system>Github</system>
+		<url>https://github.com/ThomasSousa96/gitlab-ci-test/issues</url>
+	</issueManagement>
+
+	<ciManagement>
+		<system>GitLab CI</system>
+		<url>https://gitlab.com/ThomasSousa96/gitlab-ci-test</url>
+	</ciManagement>
 
 	<licenses>
 		<license>
@@ -48,6 +66,8 @@
 	</licenses>
 
 	<properties>
+		<scm-url-base>https://github.com/ThomasSousa96/gitlab-ci-test</scm-url-base>
+		<site-url-base>file:///home/thomas/Desktop/REPO/site</site-url-base>
 		<java.version>1.8</java.version>
 		<source.encoding>UTF-8</source.encoding>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
@@ -55,6 +75,161 @@
 		<project.build.sourceEncoding>${source.encoding}</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>${source.encoding}</project.reporting.outputEncoding>
 	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.7.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-linkcheck-plugin</artifactId>
+				<version>1.2</version>
+				<configuration>
+					<offline>false</offline>
+					<excludedLinks>
+						<excludedLink>#</excludedLink>
+						<excludedLink>https://sonarcloud.io/api/project_badges</excludedLink>
+						<excludedLink>${site-url-base}/index.html</excludedLink>
+						<excludedLink>${site-url-base}/version/latest/index.html</excludedLink>
+						<excludedLink>${site-url-base}/version/${project.version}/index.html</excludedLink>
+					</excludedLinks>
+					<excludedPages>
+						<excludedPage>version-list.html</excludedPage>
+						<excludedPage>dependencies.html</excludedPage>
+						<excludedPage>plugins.html</excludedPage>
+						<excludedPage>dev-activity.html</excludedPage>
+						<excludedPage>file-activity.html</excludedPage>
+						<excludedPage>changelog.html</excludedPage>
+					</excludedPages>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>site</phase>
+						<goals>
+							<goal>linkcheck</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pdf-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<id>pdf</id>
+						<phase>site</phase>
+						<goals>
+							<goal>pdf</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.reporting.outputDirectory}</outputDirectory>
+							<includeReports>false</includeReports>
+							<aggregate>true</aggregate>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.2</version>
+				<executions>
+					<execution>
+						<id>default-prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>3.0.0</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>index</report>
+							<report>summary</report>
+							<report>mailing-lists</report>
+							<report>issue-management</report>
+							<report>distribution-management</report>
+							<report>ci-management</report>
+							<report>scm</report>
+							<report>dependency-info</report>
+							<report>dependencies</report>
+							<report>dependency-management</report>
+							<report>dependency-convergence</report>
+							<report>modules</report>
+							<report>plugin-management</report>
+							<report>plugins</report>
+							<report>licenses</report>
+							<report>team</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.0.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.2</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>3.0.0</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>2.22.1</version>
+				<!-- <reportSets> -->
+				<!-- <reportSet> -->
+				<!-- <reports> -->
+				<!-- <report>report-only</report> -->
+				<!-- </reports> -->
+				<!-- </reportSet> -->
+				<!-- </reportSets> -->
+			</plugin>
+			<!-- <plugin> -->
+			<!-- <groupId>org.apache.maven.plugins</groupId> -->
+			<!-- <artifactId>maven-changelog-plugin</artifactId> -->
+			<!-- <version>2.3</version> -->
+			<!-- <configuration> -->
+			<!-- <displayChangeSetDetailUrl>${scm-url-base}/commit/%REV%</displayChangeSetDetailUrl> -->
+			<!-- <displayFileRevDetailUrl>${scm-url-base}/blob/%REV%/%FILE%</displayFileRevDetailUrl> -->
+			<!-- <displayFileDetailUrl>${scm-url-base}/blob/master/%FILE%</displayFileDetailUrl> -->
+			<!-- <detail>true</detail> -->
+			<!-- <tagBase>master</tagBase> -->
+			<!-- <scmUrl>https://github.com/ThomasSousa96/gitlab-ci-test/tree/master</scmUrl> -->
+			<!-- <tags> -->
+			<!-- <tag>master</tag> -->
+			<!-- </tags> -->
+			<!-- <issueIDRegexPattern>#\d+</issueIDRegexPattern> -->
+			<!-- <issueLinkUrl>${scm-url-base}/issues/%ISSUE%</issueLinkUrl> -->
+			<!-- </configuration> -->
+			<!-- </plugin> -->
+		</plugins>
+	</reporting>
 
 	<dependencies>
 		<dependency>

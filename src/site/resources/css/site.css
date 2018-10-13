@@ -1,0 +1,12 @@
+#projectVersion {
+	padding-right: 10px;
+}
+
+#poweredBy iframe[src*="facebook"] {
+	width: 58px!important;
+}
+
+a.externalLink {
+	background: none!important;
+	padding-right: 0!important;
+}

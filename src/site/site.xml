@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/DECORATION/1.8.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/DECORATION/1.8.0 http://maven.apache.org/xsd/decoration-1.8.0.xsd"
+	combine.self="merge">
+
+
+	<!-- <bannerLeft> -->
+	<!-- <name>InfinityRefactoring</name> -->
+	<!-- <title>InfinityRefactoring</title> -->
+	<!-- <alt>InfinityRefactoring</alt> -->
+	<!-- <src>https://infinityrefactoring.com/assets/brand/infinity-refactoring-1999x1492.png</src> -->
+	<!-- <href>https://infinityrefactoring.com</href> -->
+	<!-- <width>125px</width> -->
+	<!-- </bannerLeft> -->
+
+	<skin>
+		<groupId>org.apache.maven.skins</groupId>
+		<artifactId>maven-fluido-skin</artifactId>
+		<version>1.7</version>
+	</skin>
+
+	<version position="right" />
+	<publishDate position="none" />
+
+	<custom>
+		<fluidoSkin>
+			<sideBarEnabled>true</sideBarEnabled>
+			<googlePlusOne />
+			<facebookLike>
+				<width>58px</width>
+			</facebookLike>
+			<twitter>
+				<user>infinityrefact</user>
+				<showUser>true</showUser>
+				<showFollowers>true</showFollowers>
+			</twitter>
+		</fluidoSkin>
+	</custom>
+
+	<poweredBy>
+		<logo name="InfinityRefactoring" href="https://infinityrefactoring.com" img="https://goo.gl/8YUdB6" />
+	</poweredBy>
+
+	<body>
+		<breadcrumbs>
+			<item name="${project.organization.name}" href="${project.organization.url}" />
+			<item name="${project.name}" href="index.html" />
+			<item name="${project.version}" href="${site-url-base}/version/${project.version}/index.html" />
+		</breadcrumbs>
+
+		<menu name="QUICK ACCESS">
+			<item name="Home" href="${site-url-base}/index.html" />
+			<item name="Javadoc" href="apidocs/index.html" />
+			<item name="Version List" href="version-list.html" />
+		</menu>
+		
+		<menu ref="reports" />
+	</body>
+</project>
